@@ -13,7 +13,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity(name = "topic_items")
 @Table(name = "topic_items")
@@ -21,7 +20,8 @@ import java.util.UUID;
 public class TopicItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @Column(columnDefinition = "VARCHAR(36)")
+    private String id;
     @Column(nullable = false)
     private String filename;
     @Column(name="original_filename", nullable = false)

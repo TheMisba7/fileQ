@@ -8,6 +8,10 @@ public final class FileUtils {
 
 
     public static String getContentType(Topic topic, MultipartFile multipartFile) {
-        return "";
+        int lastDotIndex = multipartFile.getOriginalFilename().lastIndexOf('.');
+        if (lastDotIndex == -1 || lastDotIndex == multipartFile.getOriginalFilename().length() - 1) {
+            return "";
+        }
+        return multipartFile.getOriginalFilename().substring(lastDotIndex);
     }
 }

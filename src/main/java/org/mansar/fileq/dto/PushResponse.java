@@ -5,11 +5,10 @@ import lombok.Setter;
 import org.mansar.fileq.model.TopicItem;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Setter @Getter
 public class PushResponse {
-    private UUID id;
+    private String id;
     private String filename;
     private String originalFilename;
     private Long fileSize;
@@ -26,6 +25,7 @@ public class PushResponse {
         pushResponse.setOriginalFilename(topicItem.getOriginalFilename());
         pushResponse.setFileSize(topicItem.getFileSize());
         pushResponse.setTopic(topicItem.getTopic().getName());
+        pushResponse.setStatus(topicItem.getStatus().name());
         pushResponse.setUploadedAt(topicItem.getCreatedAt());
         return pushResponse;
     }
