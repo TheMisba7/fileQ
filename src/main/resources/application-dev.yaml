@@ -1,0 +1,43 @@
+app:
+  topics:
+    auto-create: true
+    startup:
+      - name: "customerPayment"
+        allowedTypes: ["zip"]
+        enabled: true
+      - name: "vendorPayment"
+        allowedTypes: ["zip"]
+        enabled: true
+      - name: "customerRefund"
+        allowedTypes: [ "zip" ]
+        enabled: true
+      - name: "vccPayment"
+        allowedTypes: [ "xlsx" ]
+        enabled: true
+      - name: "stripePayment"
+        allowedTypes: [ "xlsx" ]
+        enabled: true
+      - name: "refundVendorCredits"
+        allowedTypes: [ "zip" ]
+        enabled: true
+      - name: "vendorReconciliation"
+        allowedTypes: [ "zip" ]
+        enabled: true
+      - name: "clientReconciliation"
+        allowedTypes: [ "zip" ]
+        enabled: true
+      - name: "create"
+        allowedTypes: [ "xlsx" ]
+        enabled: true
+      - name: "delete"
+        allowedTypes: [ "xlsx" ]
+        enabled: true
+      - name: "update"
+        allowedTypes: [ "xlsx" ]
+        enabled: true
+      - name: "expediaStatement"
+        allowedTypes: [ "xlsx" ]
+        enabled: true
+      - name: "aliReconciliation"
+        allowedTypes: [ "zip" ]
+        enabled: true

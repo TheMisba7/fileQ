@@ -2,6 +2,8 @@ package org.mansar.fileq.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +35,7 @@ public class TopicItem {
     @Column(name = "content_type", nullable = false)
     private String contentType;
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private ItemStatus status;
     @ManyToOne
     @JoinColumn(name = "topic_id", nullable = false)
@@ -45,4 +48,5 @@ public class TopicItem {
 
     @Column(name = "processing_completed_at")
     private LocalDateTime processingCompletedAt;
+    private String error;
 }

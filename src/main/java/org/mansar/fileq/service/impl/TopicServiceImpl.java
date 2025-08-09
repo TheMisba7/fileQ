@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -47,7 +48,7 @@ public class TopicServiceImpl implements ITopicService {
     @Override
     public PushResponse pushItem(String topicName, MultipartFile file) {
         Topic topic = getTopicByName(topicName);
-        String contentType = FileUtils.getContentType(topic, file);
+        String contentType = FileUtils.validateAndGetExtension(topic, file);
 
         TopicItem topicItem = new TopicItem();
         topicItem.setTopic(topic);
@@ -92,6 +93,7 @@ public class TopicServiceImpl implements ITopicService {
             File download = storageService.download(topicItem.getFilePath());
             if (download != null) {
                 topicItem.setStatus(ItemStatus.PROCESSING);
+                topicItem.setProcessingStartedAt(LocalDateTime.now());
                 topicItemDao.save(topicItem);
                 return new FileResource(new FileSystemResource(download), topicItem.getOriginalFilename());
             }
@@ -101,6 +103,16 @@ public class TopicServiceImpl implements ITopicService {
 
     @Override
     public void complete(CompleteRequest completeRequest) {
+        Optional<TopicItem> item = topicItemDao.findById(completeRequest.getTopicItemId());
+        item.ifPresent(topicItem -> {
+            topicItem.setProcessingCompletedAt(LocalDateTime.now());
+            if (Boolean.TRUE.equals(completeRequest.getIsSuccess()))
+                topicItem.setStatus(ItemStatus.COMPLETED);
+            else if (Boolean.FALSE.equals(completeRequest.getIsSuccess()))
+                topicItem.setStatus(ItemStatus.FAILED);
+            topicItem.setError(topicItem.getError());
 
+            topicItemDao.save(topicItem);
+        });
     }
 }

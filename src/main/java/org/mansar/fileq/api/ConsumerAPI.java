@@ -1,5 +1,6 @@
 package org.mansar.fileq.api;
 
+import org.mansar.fileq.dto.CompleteRequest;
 import org.mansar.fileq.dto.FileResource;
 import org.mansar.fileq.dto.PullResponse;
 import org.mansar.fileq.dto.PushResponse;
@@ -10,10 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.service.annotation.PostExchange;
 
 @RestController
 @RequestMapping("/api/consumer")
@@ -45,5 +48,10 @@ public class ConsumerAPI {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileResource.fileName() + "\"")
                 .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
                 .body(fileResource.resource());
+    }
+
+    @PostExchange("/complete")
+    public void complete(@RequestBody CompleteRequest completeRequest) {
+        topicService.complete(completeRequest);
     }
 }
