@@ -13,8 +13,11 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity(name = "topic_items")
 @Table(name = "topic_items")
@@ -49,4 +52,7 @@ public class TopicItem {
     @Column(name = "processing_completed_at")
     private LocalDateTime processingCompletedAt;
     private String error;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "json")
+    private Map<String, String> metaData;
 }

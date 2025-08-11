@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.mansar.fileq.model.TopicItem;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter @Setter
 public class PullResponse {
@@ -15,6 +16,7 @@ public class PullResponse {
     private String status;
     private String downloadUrl;
     private LocalDateTime uploadedAt;
+    private Map<String, String> metaData;
 
 
     public static PullResponse fromTopicItem(TopicItem topicItem) {
@@ -24,6 +26,7 @@ public class PullResponse {
         pullResponse.setTopic(topicItem.getTopic().getName());
         pullResponse.setStatus(topicItem.getStatus().name());
         pullResponse.setUploadedAt(topicItem.getCreatedAt());
+        pullResponse.setMetaData(topicItem.getMetaData());
         pullResponse.setDownloadUrl("/api/consumer/download/" + topicItem.getId());
         return pullResponse;
     }

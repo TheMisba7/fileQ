@@ -8,6 +8,7 @@ import org.mansar.fileq.dto.CompleteRequest;
 import org.mansar.fileq.dto.FileResource;
 import org.mansar.fileq.dto.PullResponse;
 import org.mansar.fileq.dto.PushResponse;
+import org.mansar.fileq.exceptions.FileQException;
 import org.mansar.fileq.exceptions.TopicNotFoundException;
 import org.mansar.fileq.model.FileType;
 import org.mansar.fileq.model.ItemStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -46,7 +48,7 @@ public class TopicServiceImpl implements ITopicService {
     }
 
     @Override
-    public PushResponse pushItem(String topicName, MultipartFile file) {
+    public PushResponse pushItem(String topicName, MultipartFile file, Map<String, String> metaData) {
         Topic topic = getTopicByName(topicName);
         String contentType = FileUtils.validateAndGetExtension(topic, file);
 
@@ -55,6 +57,7 @@ public class TopicServiceImpl implements ITopicService {
         topicItem.setStatus(ItemStatus.PENDING);
         topicItem.setFileSize(file.getSize());
         topicItem.setContentType(contentType);
+        topicItem.setMetaData(metaData);
         topicItem.setOriginalFilename(file.getOriginalFilename());
 
         try {
@@ -66,10 +69,8 @@ public class TopicServiceImpl implements ITopicService {
             return PushResponse.fromTopicItem(topicItem);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            throw new FileQException("Unexpected error during file upload");
         }
-
-        //todo throw internal error exception
-        return null;
     }
 
     @Override

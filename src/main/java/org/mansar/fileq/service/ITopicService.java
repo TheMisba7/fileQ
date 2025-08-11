@@ -8,10 +8,12 @@ import org.mansar.fileq.model.FileType;
 import org.mansar.fileq.model.Topic;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 public interface ITopicService {
 
     Topic create(String name, FileType... types);
-    PushResponse pushItem(String topic, MultipartFile file);
+    PushResponse pushItem(String topic, MultipartFile file, Map<String, String> metaData);
     PullResponse pullNext(String topic);
 
     FileResource download(String itemId);

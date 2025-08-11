@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.service.annotation.PostExchange;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/consumer")
 public class ConsumerAPI {
@@ -35,8 +37,9 @@ public class ConsumerAPI {
 
     @PostMapping("/upload")
     public PushResponse pushNext(@RequestParam("file") MultipartFile file,
-                                 @RequestParam("topic") String topic) {
-        return topicService.pushItem(topic, file);
+                                 @RequestParam("topic") String topic,
+                                 @RequestParam Map<String, String> metaData) {
+        return topicService.pushItem(topic, file, metaData);
     }
     @GetMapping("/download/{topicItemId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("topicItemId") String topicItemId) {
