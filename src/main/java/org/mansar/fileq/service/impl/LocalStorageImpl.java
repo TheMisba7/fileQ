@@ -52,6 +52,15 @@ public class LocalStorageImpl implements IStorageService {
         return folder.resolve(path).toFile();
     }
 
+    @Override
+    public boolean delete(String path) {
+        File download = download(path);
+        if (download != null) {
+            return download.delete();
+        }
+        return false;
+    }
+
 
     private Path getFolder(String des) {
         Path path;

@@ -1,4 +1,7 @@
 app:
+  api-key: nsHkRYVTPp5MypWgXHinOZXc8YadIktw
+  cleanup-cron: 0 0 2 1 * ?
+  cleanup_days: 15
   topics:
     auto-create: true
     startup:

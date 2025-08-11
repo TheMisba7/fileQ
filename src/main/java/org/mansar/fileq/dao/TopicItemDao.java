@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +19,5 @@ public interface TopicItemDao extends JpaRepository<TopicItem, String> {
 
     @Query(value = "SELECT item FROM topic_items item where item.status = :status order by item.createdAt asc limit 1")
     Optional<TopicItem> pullNext(@Param("status") ItemStatus status);
+    List<TopicItem> findAllByCreatedAtBefore(LocalDateTime dateTime);
 }
