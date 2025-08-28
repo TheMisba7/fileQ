@@ -20,4 +20,5 @@ public interface TopicItemDao extends JpaRepository<TopicItem, String> {
     @Query(value = "SELECT item FROM topic_items item where item.status = :status order by item.createdAt asc limit 1")
     Optional<TopicItem> pullNext(@Param("status") ItemStatus status);
     List<TopicItem> findAllByCreatedAtBefore(LocalDateTime dateTime);
+    List<TopicItem> findAllByTopicName(String topic);
 }

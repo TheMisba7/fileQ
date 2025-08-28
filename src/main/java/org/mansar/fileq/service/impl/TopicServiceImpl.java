@@ -8,8 +8,10 @@ import org.mansar.fileq.dto.CompleteRequest;
 import org.mansar.fileq.dto.FileResource;
 import org.mansar.fileq.dto.PullResponse;
 import org.mansar.fileq.dto.PushResponse;
+import org.mansar.fileq.dto.TopicItemDTO;
 import org.mansar.fileq.exceptions.FileQException;
 import org.mansar.fileq.exceptions.TopicNotFoundException;
+import org.mansar.fileq.exceptions.TopicUnActiveException;
 import org.mansar.fileq.model.FileType;
 import org.mansar.fileq.model.ItemStatus;
 import org.mansar.fileq.model.Topic;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,18 +53,20 @@ public class TopicServiceImpl implements ITopicService {
     @Override
     public PushResponse pushItem(String topicName, MultipartFile file, Map<String, String> metaData) {
         Topic topic = getTopicByName(topicName);
-        String contentType = FileUtils.validateAndGetExtension(topic, file);
+        if (!topic.isActive())
+            throw new TopicUnActiveException(topicName);
+        String extension = FileUtils.validateAndGetExtension(topic, file);
 
         TopicItem topicItem = new TopicItem();
         topicItem.setTopic(topic);
         topicItem.setStatus(ItemStatus.PENDING);
         topicItem.setFileSize(file.getSize());
-        topicItem.setContentType(contentType);
+        topicItem.setContentType(extension);
         topicItem.setMetaData(metaData);
         topicItem.setOriginalFilename(file.getOriginalFilename());
 
         try {
-            String fileName = storageService.upload(topicName, file.getBytes(), contentType);
+            String fileName = storageService.upload(topicName, file.getBytes(), extension);
             topicItem.setFilename(fileName);
             topicItem.setFilePath(topicName + "/" + fileName);
             topicItem = topicItemDao.save(topicItem);
@@ -111,8 +116,31 @@ public class TopicServiceImpl implements ITopicService {
                 topicItem.setStatus(ItemStatus.COMPLETED);
             else if (Boolean.FALSE.equals(completeRequest.getIsSuccess()))
                 topicItem.setStatus(ItemStatus.FAILED);
-            topicItem.setError(topicItem.getError());
+            topicItem.setError(completeRequest.getError());
 
+            topicItemDao.save(topicItem);
+        });
+    }
+
+    @Override
+    public List<TopicItemDTO> listItems(Optional<String> topicRq) {
+        List<TopicItem> items;
+        if (topicRq.isPresent()) {
+            items = topicItemDao.findAllByTopicName(topicRq.get());
+        } else {
+            items = topicItemDao.findAll();
+        }
+
+        return items.parallelStream().map(TopicItemDTO::fromTopicItem).toList();
+    }
+
+    @Override
+    public void cancel(String topicItemId, String reason) {
+        Optional<TopicItem> item = topicItemDao.findById(topicItemId);
+
+        item.ifPresent(topicItem -> {
+            topicItem.setStatus(ItemStatus.CANCELED);
+            topicItem.setError(reason);
             topicItemDao.save(topicItem);
         });
     }

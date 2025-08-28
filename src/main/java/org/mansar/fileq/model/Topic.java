@@ -20,4 +20,5 @@ public class Topic {
     private String name;
     @Convert(converter = FileTypeArrayConverter.class)
     private FileType[] allowedTypes;
+    private boolean isActive;
 }

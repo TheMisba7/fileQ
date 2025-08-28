@@ -2,6 +2,7 @@ package org.mansar.fileq.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mansar.fileq.exceptions.FileQException;
+import org.mansar.fileq.exceptions.TopicUnActiveException;
 import org.mansar.fileq.exceptions.UnSupportedFileType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -23,6 +24,12 @@ public class ExceptionHandler {
     public ProblemDetail handleException(FileQException exception) {
         log.error(exception.getMessage(), exception);
         return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(TopicUnActiveException.class)
+    public ProblemDetail handleException(TopicUnActiveException exception) {
+        log.error(exception.getMessage(), exception);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public ProblemDetail handleException(Exception exception) {

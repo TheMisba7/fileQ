@@ -17,10 +17,10 @@ import java.util.UUID;
 @Slf4j
 public class LocalStorageImpl implements IStorageService {
     @Override
-    public String upload(String des, byte[] content, String contentType) {
+    public String upload(String des, byte[] content, String extension) {
         Path folder = getFolder(des);
-        String name = UUID.randomUUID().toString();
-        Path filepath = folder.resolve(name + contentType);
+        String name = UUID.randomUUID().toString() + "." + extension;
+        Path filepath = folder.resolve(name);
 
         try {
             Path tempFile = Files.createTempFile(
@@ -43,7 +43,7 @@ public class LocalStorageImpl implements IStorageService {
             return null;
         }
 
-        return name + contentType;
+        return name;
     }
 
     @Override

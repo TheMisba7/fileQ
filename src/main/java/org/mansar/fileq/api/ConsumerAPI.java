@@ -4,6 +4,7 @@ import org.mansar.fileq.dto.CompleteRequest;
 import org.mansar.fileq.dto.FileResource;
 import org.mansar.fileq.dto.PullResponse;
 import org.mansar.fileq.dto.PushResponse;
+import org.mansar.fileq.dto.TopicItemDTO;
 import org.mansar.fileq.service.ITopicService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.service.annotation.PostExchange;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/consumer")
@@ -28,6 +31,11 @@ public class ConsumerAPI {
 
     public ConsumerAPI(ITopicService topicService) {
         this.topicService = topicService;
+    }
+
+    @GetMapping("/list-items")
+    private List<TopicItemDTO> listItems(@RequestParam(value = "topic", required = false) String topic) {
+       return topicService.listItems(Optional.ofNullable(topic));
     }
 
     @GetMapping("/pull")
@@ -56,5 +64,10 @@ public class ConsumerAPI {
     @PostExchange("/complete")
     public void complete(@RequestBody CompleteRequest completeRequest) {
         topicService.complete(completeRequest);
+    }
+
+    @PostExchange("/cancel/{topicItemId}")
+    public void cancel(@PathVariable("topicItemId") String topicItemId, @RequestParam(required = false) String reason) {
+        topicService.cancel(topicItemId, reason);
     }
 }

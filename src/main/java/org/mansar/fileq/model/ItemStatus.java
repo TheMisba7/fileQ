@@ -4,5 +4,6 @@ public enum ItemStatus {
     PENDING,
     PROCESSING,
     COMPLETED,
+    CANCELED,
     FAILED
 }
